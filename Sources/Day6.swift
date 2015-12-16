@@ -3,23 +3,6 @@ import Foundation
 // Day 6: Probably a Fire Hazard
 // http://adventofcode.com/day/6
 
-if Process.arguments.count < 2 {
-	print("USAGE: \(Process.arguments[0]) <inputfile>")
-	exit(1)
-}
-
-func readInstructions(path: String) -> [String]? {
-	do {
-		let stringList = try String(contentsOfFile: path, encoding: NSUTF8StringEncoding)
-		let list = stringList.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
-		return list.filter({ $0.characters.count > 0 })
-	} catch {
-		return nil
-	}
-}
-
-let dimensions = 1000
-
 struct Coordinate {
 	var x: Int
 	var y: Int
@@ -114,13 +97,29 @@ class LightGrid {
 
 }
 
-guard let instructions = readInstructions(Process.arguments[1]) else {
-	print("Failed to load instructions")
-	exit(1)
-}
+let dimensions = 1000
 
-var lightGrid = LightGrid(enableBrightness: false)
-for i in instructions {
-	lightGrid.apply(Instruction(i))
+func Day6(input: String?, args: [String]) {
+
+	guard let rawInstructions = input else {
+		print("USAGE: \(Process.arguments[0]) 6 <inputfile> <brightness: [Yes|No]>")
+		exit(1)
+	}
+
+	if args.count < 1 {
+		print("USAGE: \(Process.arguments[0]) 6 <inputfile> <brightness: [Yes|No]>")
+		exit(1)
+	}
+
+	let brightnessMode = args[0] == "Yes"
+	print("Brightness mode: \(brightnessMode)")
+
+	let list = rawInstructions.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+	let instructions = list.filter({ $0.characters.count > 0 })
+
+	let lightGrid = LightGrid(enableBrightness: brightnessMode)
+	for i in instructions {
+		lightGrid.apply(Instruction(i))
+	}
+	print("Total luminance: \(lightGrid.brightness())")
 }
-print("Total luminance: \(lightGrid.brightness())")

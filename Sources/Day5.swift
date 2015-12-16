@@ -3,25 +3,6 @@ import Foundation
 // Day 5: Doesn't He Have Intern-Elves For This?
 // http://adventofcode.com/day/5
 
-if Process.arguments.count < 2 {
-	print("USAGE: \(Process.arguments[0]) <inputfile>")
-	exit(1)
-}
-
-func readStrings(path: String) -> [String]? {
-	do {
-		let stringList = try String(contentsOfFile: path, encoding: NSUTF8StringEncoding)
-		return stringList.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
-	} catch {
-		return nil
-	}
-}
-
-guard let strings = readStrings(Process.arguments[1]) else {
-	print("File \(Process.arguments[1]) does not exist")
-	exit(1)
-}
-
 extension String {
 
 	func isNice1() -> Bool {
@@ -64,5 +45,16 @@ extension String {
 	}
 }
 
-print("\(strings.filter({ $0.isNice1() }).count) strings are nice under original rules")
-print("\(strings.filter({ $0.isNice2() }).count) strings are nice under new rules")
+func Day5(input: String?, args: [String]) {
+
+	guard let rawStrings = input else {
+		print("USAGE: \(Process.arguments[0]) 5 <inputfile>")
+		exit(1)
+	}
+
+	let strings = rawStrings.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+
+	print("\(strings.filter({ $0.isNice1() }).count) strings are nice under original rules")
+	print("\(strings.filter({ $0.isNice2() }).count) strings are nice under new rules")
+
+}

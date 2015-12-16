@@ -3,26 +3,6 @@ import Foundation
 // Day 7: Some Assembly Required
 // http://adventofcode.com/day/7
 
-if Process.arguments.count < 3 {
-	print("USAGE: \(Process.arguments[0]) <inputfile> <wire>")
-	exit(1)
-}
-
-func readInstructions(path: String) -> [String]? {
-	do {
-		let stringList = try String(contentsOfFile: path, encoding: NSUTF8StringEncoding)
-		let list = stringList.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
-		return list.filter({ $0.characters.count > 0 })
-	} catch {
-		return nil
-	}
-}
-
-guard let instructions = readInstructions(Process.arguments[1]) else {
-	print("Failed to load instructions")
-	exit(1)
-}
-
 extension String {
 	func match(regex: String) -> [String]? {
 		do {
@@ -185,25 +165,42 @@ func Parse(input: String) -> Wire? {
 	return nil
 }
 
-var wireboard = Wireboard()
-for i in instructions {
-	if let wire = Parse(i) {
-		wireboard.set(wire.name, source: wire.source)
-	} else {
-		print("Problem reading \"\(i)\"")
+func Day7(input: String?, args: [String]) {
+
+	if args.count < 1 {
+		print("USAGE: \(Process.arguments[0]) 7 <inputfile> <wire>")
+		exit(1)
 	}
+
+	guard let rawInstructions = input else {
+		print("USAGE: \(Process.arguments[0]) 7 <inputfile> <wire>")
+		exit(1)
+	}
+
+	let list = rawInstructions.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+	let instructions = list.filter({ $0.characters.count > 0 })
+
+	let wireboard = Wireboard()
+	for i in instructions {
+		if let wire = Parse(i) {
+			wireboard.set(wire.name, source: wire.source)
+		} else {
+			print("Problem reading \"\(i)\"")
+		}
+	}
+
+	// for (wire, input) in wireboard.board {
+	// 	print("\(wire): \(wireboard.read(wire))")
+	// }
+
+	let wire = args[0]
+
+	// Part 1
+	print("[Part 1] \(wire) => \(wireboard.read(wire))")
+
+	// Part 2
+	wireboard.board["b"] = ConstantInput(wireboard.read(wire))
+	wireboard.reset()
+	print("[Part 2] \(wire) => \(wireboard.read(wire))")
+
 }
-
-// for (wire, input) in wireboard.board {
-// 	print("\(wire): \(wireboard.read(wire))")
-// }
-
-let wire = Process.arguments[2]
-
-// Part 1
-print("[Part 1] \(wire) => \(wireboard.read(wire))")
-
-// Part 2
-wireboard.board["b"] = ConstantInput(wireboard.read(wire))
-wireboard.reset()
-print("[Part 2] \(wire) => \(wireboard.read(wire))")
