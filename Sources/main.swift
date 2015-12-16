@@ -10,6 +10,7 @@ let challenges: [Challenge] = [
 	Day5,
 	Day6,
 	Day7,
+	Day8,
 ]
 
 func loadInput(path: String) -> String? {
